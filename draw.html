@@ -9,7 +9,7 @@
 </head>
 
 <body>
-    <div class="container" id="app" data-page="draw" v-show="mainShow">
+    <div class="container" id="app" data-page="draw">
         <div class="back" style="top: 6px;">
             <a href="javascript:history.go(-1)"><img src="./images/back.png" alt="" width="45%"></a>
         </div>
@@ -23,6 +23,28 @@
         </div>
         <div class="backup" v-show="popupCont.show" @click="popupCont.show = !popupCont.show"></div>
         <my-popup :popup-cont="popupCont"></my-popup>
+        <div class="loading" v-show="loaded">
+            <div class="spinner">
+                <div class="spinner-container container1">
+                    <div class="circle1"></div>
+                    <div class="circle2"></div>
+                    <div class="circle3"></div>
+                    <div class="circle4"></div>
+                </div>
+                <div class="spinner-container container2">
+                    <div class="circle1"></div>
+                    <div class="circle2"></div>
+                    <div class="circle3"></div>
+                    <div class="circle4"></div>
+                </div>
+                <div class="spinner-container container3">
+                    <div class="circle1"></div>
+                    <div class="circle2"></div>
+                    <div class="circle3"></div>
+                    <div class="circle4"></div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="./js/vue.min.js"></script>

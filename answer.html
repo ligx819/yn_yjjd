@@ -9,7 +9,7 @@
 </head>
 
 <body>
-    <div class="container" id="app" data-page="answer" v-show="mainShow">
+    <div class="container" id="app" data-page="answer">
         <div class="back">
             <a href="javascript:history.go(-1)"><img src="./images/back.png" alt="" width="45%"></a>
         </div>
@@ -34,7 +34,7 @@
         </div>
         <div class="submit">
             <p>
-                <button @click="submit">提交</button>
+                <a href="javascript:void(0);"><img src="./images/submit.png" @click="submit" width="100%"></a>
             </p>
         </div>
         <div class="backup" v-show="popupCont.show" @click="popupCont.show = !popupCont.show"></div>

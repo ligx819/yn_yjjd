@@ -17,7 +17,7 @@ let validity = (h, m, s) => {
 // 设置cookie
 let setCookie = (cname, cvalue, extime) => {
     let expires = "expires=" + extime;
-    document.cookie = cname + "=" + cvalue + "; " + expires;
+    document.cookie = cname + "=" + cvalue + ";" + expires;
 }
 
 // 获取cookie
@@ -322,22 +322,7 @@ let app = new Vue({
             'answer': 1,
             'selected': -1
         }, ],
-        count: 0,
-        mainShow: false
-    },
-    beforeCreate() {
-        let arr = ['images/5.png', 'images/10.png', 'images/20.png', 'images/68.png', 'images/128.png', 'images/answer_border_down.png', 'images/answer_border_top.png',
-            'images/answer_good.png', 'images/answer_top.png', 'images/back.png', 'images/balls.png', 'images/banner.png', 'images/bg.png', 'images/btn_bg.png',
-            'images/click_draw.png', 'images/draw_machine.png', 'images/draw_machine1.png', 'images/draw_machine2.png', 'images/gongxi.png', 'images/i_buttom.png',
-            'images/i_top.png', 'images/lijichj.png', 'images/rule_border.png', 'images/rule_top.png', 'images/rule.png', 'images/woyaodati.png'
-        ];
-        for (let i = 0; i < arr.length; i++) {
-            let img = new Image();
-            img.src = arr[i];
-            img.onload = () => {
-                this.count++;
-            }
-        }
+        loaded: false
     },
     mounted() {
         // 各页面高度自适应
@@ -349,7 +334,7 @@ let app = new Vue({
                 case 'index':
                     let th1 = document.querySelector("div[class='top']").getBoundingClientRect().height;
                     let fh = document.querySelector("div[class='i_foot']").getBoundingClientRect().height;
-                    if (th1 + fh < wh) {
+                    if (th1 + fh < wh && (th1 > 200 && fh > 200)) {
                         this.fixed = true;
                         document.getElementById('app').style.height = wh + 'px';
                     }
@@ -359,25 +344,23 @@ let app = new Vue({
                     break;
                 case 'draw':
                     let th = document.querySelector("div[class='top']").getBoundingClientRect().height;
+                    console.log(th);
                     if (th + 311.5 < wh) {
                         document.getElementById('app').style.height = wh + 'px';
+                    }
+                    if (th + 374 > wh) {
+                        document.getElementById('app').style.height = th + 374 + 'px';
                     }
                     break;
                 case 'rule':
                     let rh = document.querySelector("div[class='rule_top']").getBoundingClientRect().height;
+                    if (rh < 42) rh = 42;
                     document.getElementById('rule_cont').style.height = wh - rh - 40 + 'px';
                     document.getElementById('app').style.height = wh - 15 + 'px';
                     break;
             }
 
         })
-    },
-    watch: {
-        count(val, oldval) {
-            if (val == 26) {
-                this.mainShow = true;
-            }
-        }
     },
     methods: {
         submit() {
@@ -464,18 +447,20 @@ let app = new Vue({
             let that = this;
             ctx.clearRect(0, 0, w, h);
             that.ballSrcs.forEach((e) => {
-                // let dx = Math.random() * (110 - 80 + 1) + 80;
-                // let dy = Math.random() * (70 - 60 + 1) + 60;
-                let dx = Math.random() * (400 - 170 + 1) + 170;
-                let dy = Math.random() * (220 - 60 + 1) + 60;
+                let dx = Math.random() * (160 - 40 + 1) + 40;
+                let dy = Math.random() * (180 - 10 + 1) + 10;
+                // let dx = Math.random() * (400 - 170 + 1) + 170;
+                // let dy = Math.random() * (220 - 60 + 1) + 60;
                 that.loadImage(e, (x, y, width, height) => {
-                    // ctx.save();
-                    // let rt = Math.random() * 360;
-                    // ctx.translate(160, 90);
-                    // ctx.rotate(rt * Math.PI / 180);
-                    // ctx.translate(-160, -90);
+                    ctx.save();
+                    let rt = Math.random() * 360;
+                    // console.log(rt);
+                    ctx.translate(320, 180);
+                    ctx.rotate(rt * Math.PI / 180);
+                    ctx.translate(-150, -150);
                     ctx.drawImage(that.imgNow, x, y, width, height);
-                    // ctx.restore();
+                    // ctx.rotate(-rt * Math.PI / 180);
+                    ctx.restore();
                 }, {
                     "x": dx,
                     "y": dy,
@@ -495,6 +480,8 @@ let app = new Vue({
                 success: function(str) {
                     let tt = '',
                         ct = '';
+                    that.loaded = false;
+                    that.timer = false;
                     str === '未中奖' ? (tt = '很抱歉，没有中奖！', ct = '您距离现金红包仅0.00001米！继续加油哦！') : (tt = '恭喜您，获得了' + str, ct = '红包将在收到中奖推送之后一个工作日内发放至微信账户。（红包可在“钱包”→“零钱”中查看）。因获奖者个人原因无法接收红包或联系不上的，均视为自愿弃奖。');
                     that.popupCont = {
                         show: true,
@@ -518,6 +505,7 @@ let app = new Vue({
         },
         clickDraw() {
             let that = this;
+            setCookie('drawChance', -1, validity(23, 59, 59));
             if (!getCookie('drawChance') || parseInt(getCookie('drawChance')) < 0) {
                 that.popupCont = {
                     show: true,
@@ -547,21 +535,21 @@ let app = new Vue({
                 }
                 return false;
             }
-            that.machineSrc = './images/draw_machine2.png';
             let bs = that.ballSrcs;
             let canvas = document.getElementById('canvas');
             let ctx = canvas.getContext('2d');
             if (!that.timer) {
+                that.machineSrc = './images/draw_machine2.png';
                 that.timer = setInterval(() => {
                     that.drawing(ctx, canvas.width, canvas.height);
-                }, 50);
+                }, 120);
                 setTimeout(() => {
                     clearInterval(that.timer);
-                    that.timer = false;
+                    that.loaded = true;
                     that.lotteryResult();
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     that.machineSrc = './images/draw_machine1.png';
-                }, 2000);
+                }, 2500);
             }
         }
     }
