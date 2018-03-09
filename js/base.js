@@ -321,7 +321,9 @@ let app = new Vue({
             }],
             'answer': 1,
             'selected': -1
-        }, ]
+        }, ],
+        count: 0,
+        mainShow: false
     },
     beforeCreate() {
         let arr = ['images/5.png', 'images/10.png', 'images/20.png', 'images/68.png', 'images/128.png', 'images/answer_border_down.png', 'images/answer_border_top.png',
@@ -329,10 +331,12 @@ let app = new Vue({
             'images/click_draw.png', 'images/draw_machine.png', 'images/draw_machine1.png', 'images/draw_machine2.png', 'images/gongxi.png', 'images/i_buttom.png',
             'images/i_top.png', 'images/lijichj.png', 'images/rule_border.png', 'images/rule_top.png', 'images/rule.png', 'images/woyaodati.png'
         ];
-        let img = [];
-        for (var i = 0; i < arr.length; i++) {
-            img[i] = new Image();
-            img[i].src = arr[i];
+        for (let i = 0; i < arr.length; i++) {
+            let img = new Image();
+            img.src = arr[i];
+            img.onload = () => {
+                this.count++;
+            }
         }
     },
     mounted() {
@@ -367,6 +371,13 @@ let app = new Vue({
             }
 
         })
+    },
+    watch: {
+        count(val, oldval) {
+            if (val == 26) {
+                this.mainShow = true;
+            }
+        }
     },
     methods: {
         submit() {
