@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>快乐十分，有奖竞答</title>
+    <link rel="stylesheet" href="./css/base.css">
+</head>
+
+<body>
+    <div class="container" id="app" data-page="draw">
+        <div class="back" style="top: 6px;">
+            <a href="javascript:history.go(-1)"><img src="./images/back.png" alt="" width="45%"></a>
+        </div>
+        <div class="top">
+            <img src="./images/banner.png" alt="" width="100%">
+        </div>
+        <div class="machine">
+            <canvas id="canvas" width="640" height="360" style="width:320px;height:180px;"></canvas>
+            <img :src="machineSrc" width="100%">
+            <img src="./images/click_draw.png" class="click_draw" @click="clickDraw">
+        </div>
+        <div class="backup" v-show="popupCont.show" @click="popupCont.show = !popupCont.show"></div>
+        <my-popup :popup-cont="popupCont"></my-popup>
+    </div>
+
+    <script src="./js/vue.min.js"></script>
+    <script src="./js/base.js"></script>
+</body>
+
+</html>
