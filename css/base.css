@@ -53,6 +53,7 @@ dl {
     padding: 0;
     position: relative;
     margin: 0 auto;
+    overflow-x: hidden;
 }
 
 a:link,
@@ -231,7 +232,7 @@ a:active {
 
 .back {
     position: absolute;
-    top: -5px;
+    top: 15px;
     left: -58px;
     z-index: 99;
 }
@@ -383,6 +384,12 @@ p {
 .i_foot.fixe {
     position: absolute;
     bottom: 0;
+    left: 0;
+}
+
+.machine_img {
+    position: absolute;
+    top: 0;
     left: 0;
 }
 

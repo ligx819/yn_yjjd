@@ -1,11 +1,9 @@
 let validity = (h, m, s) => {
-    //获取当前时间时间戳
     let nowunix = Math.round(new Date().getTime());
     let date = new Date();
     date.setHours(h);
     date.setMinutes(m);
     date.setSeconds(s);
-    //获取指定时间时间戳
     let secunix = Math.round(date.getTime());
     let shengunix = secunix - nowunix;
     shengunix = parseFloat(shengunix) / 1000;
@@ -32,13 +30,13 @@ let getCookie = (cname) => {
 }
 
 //序列化对象
-let params = (data) => {
-    let arg = [];
-    for (let i in data) {
-        arr.push(encodeURIComponent(i) + '=' + encodeURIComponent(data[i]));
-    }
-    return arr.join('&');
-}
+// let params = (data) => {
+//     let arr = [];
+//     for (let i in data) {
+//         arr.push(encodeURIComponent(i) + '=' + encodeURIComponent(data[i]));
+//     }
+//     return arr.join('&');
+// }
 
 //封装ajax
 let ajax = (opt) => {
@@ -109,7 +107,8 @@ let app = new Vue({
             }]
         },
         fixed: false,
-        machineSrc: './images/draw_machine1.png',
+        canClick: true,
+        machineSrc: './images/machine1.png',
         ballSrcs: ['images/5.png', 'images/5.png', 'images/10.png', 'images/10.png', 'images/20.png', 'images/20.png', 'images/68.png', 'images/68.png', 'images/68.png', 'images/128.png', 'images/128.png', 'images/128.png'],
         // 每天答题机会
         answerChance: 1,
@@ -344,7 +343,6 @@ let app = new Vue({
                     break;
                 case 'draw':
                     let th = document.querySelector("div[class='top']").getBoundingClientRect().height;
-                    console.log(th);
                     if (th + 311.5 < wh) {
                         document.getElementById('app').style.height = wh + 'px';
                     }
@@ -356,7 +354,7 @@ let app = new Vue({
                     let rh = document.querySelector("div[class='rule_top']").getBoundingClientRect().height;
                     if (rh < 42) rh = 42;
                     document.getElementById('rule_cont').style.height = wh - rh - 40 + 'px';
-                    document.getElementById('app').style.height = wh - 15 + 'px';
+                    document.getElementById('app').style.height = wh + 'px';
                     break;
             }
 
@@ -449,17 +447,13 @@ let app = new Vue({
             that.ballSrcs.forEach((e) => {
                 let dx = Math.random() * (160 - 40 + 1) + 40;
                 let dy = Math.random() * (180 - 10 + 1) + 10;
-                // let dx = Math.random() * (400 - 170 + 1) + 170;
-                // let dy = Math.random() * (220 - 60 + 1) + 60;
                 that.loadImage(e, (x, y, width, height) => {
                     ctx.save();
                     let rt = Math.random() * 360;
-                    // console.log(rt);
                     ctx.translate(320, 180);
                     ctx.rotate(rt * Math.PI / 180);
                     ctx.translate(-150, -150);
                     ctx.drawImage(that.imgNow, x, y, width, height);
-                    // ctx.rotate(-rt * Math.PI / 180);
                     ctx.restore();
                 }, {
                     "x": dx,
@@ -495,7 +489,8 @@ let app = new Vue({
                             'txt': '返回首页',
                             'href': 'index.html'
                         }]
-                    }
+                    };
+                    that.canClick = true;
                     let dc = parseInt(getCookie('drawChance'));
                     dc -= 1;
                     setCookie('drawChance', dc, validity(23, 59, 59));
@@ -505,51 +500,43 @@ let app = new Vue({
         },
         clickDraw() {
             let that = this;
-            setCookie('drawChance', -1, validity(23, 59, 59));
-            if (!getCookie('drawChance') || parseInt(getCookie('drawChance')) < 0) {
-                that.popupCont = {
-                    show: true,
-                    topImg: '',
-                    tit: '很抱歉，您今天还未获得抽奖机会！',
-                    cont: '用户只有通过活动首页的“我要答题”参与答题游戏才能获得抽奖机会哦，快快参与吧！',
-                    btns: [{
-                        'txt': '我要答题',
-                        'href': 'answer.html'
-                    }, {
-                        'txt': '返回首页',
-                        'href': 'index.html'
-                    }]
+            if (that.canClick) {
+                if (!getCookie('drawChance') || parseInt(getCookie('drawChance')) < 0) {
+                    that.popupCont = {
+                        show: true,
+                        topImg: '',
+                        tit: '很抱歉，您今天还未获得抽奖机会！',
+                        cont: '用户只有通过活动首页的“我要答题”参与答题游戏才能获得抽奖机会哦，快快参与吧！',
+                        btns: [{
+                            'txt': '我要答题',
+                            'href': 'answer.html'
+                        }, {
+                            'txt': '返回首页',
+                            'href': 'index.html'
+                        }]
+                    }
+                    return false;
                 }
-                return false;
-            }
-            if (parseInt(getCookie('drawChance')) === 0) {
-                that.popupCont = {
-                    show: true,
-                    topImg: '',
-                    tit: '很抱歉，您今天的抽奖机会已用完！',
-                    cont: '您今天获得的抽奖机会已用完，明天继续加油哦！',
-                    btns: [{
-                        'txt': '返回首页',
-                        'href': 'index.html'
-                    }]
+                if (parseInt(getCookie('drawChance')) === 0) {
+                    that.popupCont = {
+                        show: true,
+                        topImg: '',
+                        tit: '很抱歉，您今天的抽奖机会已用完！',
+                        cont: '您今天获得的抽奖机会已用完，明天继续加油哦！',
+                        btns: [{
+                            'txt': '返回首页',
+                            'href': 'index.html'
+                        }]
+                    }
+                    return false;
                 }
-                return false;
-            }
-            let bs = that.ballSrcs;
-            let canvas = document.getElementById('canvas');
-            let ctx = canvas.getContext('2d');
-            if (!that.timer) {
-                that.machineSrc = './images/draw_machine2.png';
-                that.timer = setInterval(() => {
-                    that.drawing(ctx, canvas.width, canvas.height);
-                }, 120);
+                that.machineSrc = './images/machine2.gif';
+                that.canClick = false;
                 setTimeout(() => {
-                    clearInterval(that.timer);
                     that.loaded = true;
                     that.lotteryResult();
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    that.machineSrc = './images/draw_machine1.png';
-                }, 2500);
+                    that.machineSrc = './images/machine1.png';
+                }, 2000);
             }
         }
     }

@@ -17,8 +17,9 @@
             <img src="./images/banner.png" alt="" width="100%">
         </div>
         <div class="machine">
-            <canvas id="canvas" width="640" height="360" style="width:320px;height:180px;"></canvas>
-            <img :src="machineSrc" width="100%">
+            <!-- <canvas id="canvas" width="640" height="360" style="width:320px;height:180px;"></canvas> -->
+            <img src="./images/machine_bg.png" width="100%">
+            <img :src="machineSrc" width="100%" class="machine_img">
             <img src="./images/click_draw.png" class="click_draw" @click="clickDraw">
         </div>
         <div class="backup" v-show="popupCont.show" @click="popupCont.show = !popupCont.show"></div>
